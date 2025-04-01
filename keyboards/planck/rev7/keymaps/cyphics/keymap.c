@@ -1,5 +1,5 @@
 /* Copyright 2015-2023 Jack Humbert
- *
+
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
@@ -14,22 +14,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "keycodes.h"
 #include QMK_KEYBOARD_H
 #include "keymap_swiss_fr.h"
 
 
 
-enum planck_layers { _QWERTY, _QWERTZ, _LOWER, _RAISE, _SYMBOLS, _ADJUST, _PLOVER };
+enum planck_layers { _QWERTY, _QWERTZ, _LOWER, _RAISE, _SYMBOLS, _ADJUST, _PLOVER, _MISC };
 
 enum planck_keycodes { PLOVER = SAFE_RANGE, BACKLIT, EXT_PLV };
 
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
+#define MISC  MO(_MISC)
 
 #define QWERTY PDF(_QWERTY)
-#define QWERTZ PDF(_QWERTZ)
-#define COLEMAK PDF(_COLEMAK)
-#define DVORAK PDF(_DVORAK)
+// #define QWERTZ PDF(_QWERTZ)
+// #define COLEMAK PDF(_COLEMAK)
+// #define DVORAK PDF(_DVORAK)
 
 // Tap dance declarations
 enum {
@@ -82,67 +84,6 @@ void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
 }
 
 
-/* clang-format off */
-const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-
-/* Qwerty
- * ,-----------------------------------------------------------------------------------.
- * | Esc  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Bksp |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  '   |
- * |------+-    -----+------+------+------+------+------+------+------+------+------+------|
- * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Right |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
-* | Brite| Tab  | GUI  | Alt   |Lower |    Space    |Raise | Enter| Left | Down |  Up  |
- * `-----------------------------------------------------------------------------------'
- */
-
-[_QWERTY] = LAYOUT_planck_grid(
-    TD(TD_TAB_CAPS), KC_Q,   KC_W,    KC_E,    KC_R,  KC_T,    KC_Y,   KC_U,  KC_I,    KC_O,    KC_P,    KC_BSPC,
-    TD(TD_CTRL_ESC), KC_A,   KC_S,    KC_D,    KC_F,  KC_G,    KC_H,   KC_J,  KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-    KC_LSFT,         KC_Z,   KC_X,    KC_C,    KC_V,  KC_B,    KC_N,   KC_M,  KC_COMM, KC_DOT,  KC_SLSH, KC_ENT,
-    BACKLIT,         KC_TAB, KC_LGUI, KC_LALT, LOWER, KC_RSFT, KC_SPC, RAISE, KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT
-),
-
-/* Raise
- * ,-----------------------------------------------------------------------------------.
- * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  |  =   |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Del  |  !   |   @  |   #  |   $  |   %  |   ^  |   &  |   *  |   (  |   )  |  +   |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |   \  |  _   |   -  |   [  |   ]  |   {  |   }  |  |   |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
- * `-----------------------------------------------------------------------------------'
- */
-
-[_RAISE] = LAYOUT_planck_grid(
-    KC_TILD,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_EQL,
-    KC_DEL,  KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_PLUS, // KC_LBRC, KC_RBRC, KC_BSLS,
-    TD(CT_CLN), _______, _______, _______, KC_BSLS, KC_UNDS, KC_MINS, KC_LBRC, KC_RBRC, KC_LCBR, KC_RCBR,KC_PIPE,  // KC_PGUP, KC_PGDN,
-    _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
-),
-
-/* Lower
- * ,-----------------------------------------------------------------------------------.
- * |   ~  |  F1  |  F2  |  F3  |  F4  |     |     |     | Bksp |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Del  |  F5  |  F6  |  F7  |  F8  |     |  |   |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |  F9  |  F10 |  F11 |  F12 |      |      | Home | End  |      |      |      |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
- * `-----------------------------------------------------------------------------------'
- */
-
-[_LOWER] = LAYOUT_planck_grid(
-    KC_GRV,  _______, _______, _______, KC_HOME, _______, _______, KC_END,  KC_MS_U, _______, _______, KC_BSPC,
-    KC_DEL,  _______, _______, KC_BTN2, KC_BTN1, KC_BTN3, KC_WH_D, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, _______,
-    _______, _______, _______, KC_BTN4, KC_BTN5, KC_BTN6, _______, KC_PGDN, KC_PGUP, _______, _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
-),
-
-
 #define ALGR_A  ALGR(KC_A)
 #define ALGR_S  ALGR(KC_S)
 #define ALGR_6  ALGR(KC_6)
@@ -152,39 +93,49 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #define ALGR_E  ALGR(KC_E)
 #define ALGR_QU ALGR(KC_QUOT)
 
+// TODO :
+// - put arrow keys in other layer
+// - create held layer (possibly with CTRL?)
+
+/* clang-format off */
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+
+[_QWERTY] = LAYOUT_planck_grid(
+    KC_TAB,         KC_Q,   KC_W,    KC_E,    KC_R,  KC_T,    KC_Y,   KC_U,  KC_I,    KC_O,    KC_P,    KC_BSPC,
+    TD(TD_CTRL_ESC), KC_A,    KC_S,    KC_D,    KC_F,  KC_G,    KC_H,   KC_J,  KC_K,    KC_L,    KC_SCLN, KC_QUOT,
+    KC_LSFT,         KC_Z,    KC_X,    KC_C,    KC_V,  KC_B,    KC_N,   KC_M,  KC_COMM, KC_DOT,  KC_SLSH, KC_ENT,
+    BACKLIT,         _______, KC_LGUI, KC_LALT, LOWER, MISC, KC_SPC, RAISE, KC_LEFT, KC_DOWN, KC_UP, KC_RIGHT
+),
+
+[_RAISE] = LAYOUT_planck_grid(
+    KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
+    KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_EQL , KC_DLR,  KC_CIRC, KC_LPRN, KC_RPRN, KC_AMPR, KC_ASTR, KC_PLUS,
+    KC_LSFT, KC_LT,   KC_GT,   KC_BSLS, KC_PERC, KC_UNDS, KC_MINS, KC_LCBR, KC_RCBR, KC_LBRC, KC_RBRC, KC_PIPE,
+    _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
+),
+
+[_LOWER] = LAYOUT_planck_grid(
+    KC_GRV,  _______, _______, _______, KC_HOME, _______, _______, KC_END,  KC_MS_U, _______, _______, KC_DEL,
+    KC_DEL,  _______, _______, KC_BTN2, KC_BTN1, KC_BTN3, KC_WH_D, KC_MS_L, KC_MS_D, KC_MS_R, KC_WH_U, _______,
+    _______, _______, _______, KC_BTN4, KC_BTN5, KC_BTN6, _______, KC_PGDN, KC_PGUP, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
+),
+
+
 [_ADJUST] = LAYOUT_planck_grid(
     QK_BOOT, KC_F1,   KC_F2,   KC_F3,   KC_F4,   _______, _______,  _______, _______, ALGR_6, ALGR_U, ALGR_0,
     DB_TOGG, KC_F5,   KC_F6,   KC_F7,   KC_F8,   _______, _______, _______, ALGR_E,  ALGR_A, ALGR_S, ALGR_QU,
-    _______, KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______, _______, ALGR_C,  _______, _______, _______, _______,
+    KC_CAPS, KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______, _______, ALGR_C,  _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
+),
+
+[_MISC] = LAYOUT_planck_grid(
+    QK_BOOT, KC_F1,   KC_F2,   KC_F3,   KC_F4,   _______, _______,  _______, KC_UP, ALGR_6, ALGR_U, ALGR_0,
+    DB_TOGG, KC_F5,   KC_F6,   KC_F7,   KC_F8,   _______, _______, KC_LEFT, KC_DOWN,  KC_RIGHT, ALGR_S, ALGR_QU,
+    KC_CAPS, KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______, _______, ALGR_C,  _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 )
 };
-
-/* Adjust (Lower + Raise)
- *                      v------------------------RGB CONTROL--------------------v
- * ,-----------------------------------------------------------------------------------.
- * |      | Reset|Debug | RGB  |RGBMOD| HUE+ | HUE- | SAT+ | SAT- |BRGTH+|BRGTH-|  Del |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |MUSmod|Aud on|Audoff|AGnorm|AGswap|Qwerty|Colemk|Dvorak|Plover|      |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |Voice-|Voice+|Mus on|Musoff|MIDIon|MIDIof|      |      |      |      |      |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |             |      |      |      |      |      |
- * `-----------------------------------------------------------------------------------'
- */
-
-/*
-[_ADJUST] = LAYOUT_planck_grid(
-    _______, QK_BOOT, DB_TOGG, UG_TOGG, UG_NEXT, UG_HUEU, UG_HUED, UG_SATU, UG_SATD, UG_SPDU, UG_SPDD, KC_DEL ,
-    ALGR(KC_A), EE_CLR,  MU_NEXT, AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, QWERTY,  QWERTZ, DVORAK,  PLOVER,  _______,
-    _______, AU_PREV, AU_NEXT, MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
-)
-};
-*/
-
-
-
 
 #ifdef ENCODER_MAP_ENABLE
 /* Rotary Encoders

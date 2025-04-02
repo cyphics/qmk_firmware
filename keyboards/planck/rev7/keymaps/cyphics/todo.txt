@@ -1,0 +1,1 @@
+- Add shift to allow smoother mouse control (cursor and wheel)

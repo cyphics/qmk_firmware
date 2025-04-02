@@ -15,12 +15,13 @@
  */
 
 #include "keycodes.h"
+#include "keymap_us.h"
 #include QMK_KEYBOARD_H
 #include "keymap_swiss_fr.h"
 
 
 
-enum planck_layers { _QWERTY, _QWERTZ, _LOWER, _RAISE, _SYMBOLS, _ADJUST, _PLOVER, _MISC };
+enum planck_layers { _QWERTY, _QWERTZ, _LOWER, _RAISE, _SYMBOLS, _ADJUST, _PLOVER, _MISC, _PEPPY };
 
 enum planck_keycodes { PLOVER = SAFE_RANGE, BACKLIT, EXT_PLV };
 
@@ -115,20 +116,36 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   BACKLIT         , _______ , KC_LGUI , KC_LALT , LOWER , MISC , KC_SPC , RAISE , KC_LEFT , KC_DOWN , KC_UP   , KC_RIGHT
 ),
 
-//    ┌──────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬──────┬──────┬──────┬──────┐
-//    │  `   │  1  │  2  │  3  │  4  │  5  │  6  │  7  │  8   │  9   │  0   │ bspc │
-//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼──────┼──────┼──────┤
-//    │  ~   │  !  │  @  │  #  │  =  │  $  │  ^  │  (  │  )   │  &   │  *   │  +   │
-//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼──────┼──────┼──────┤
-//    │ lsft │  <  │  >  │  \  │  %  │  _  │  -  │  {  │  }   │  [   │  ]   │  |   │
-//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼──────┼──────┼──────┤
-//    │      │     │     │     │     │     │     │     │ mnxt │ vold │ volu │ mply │
-//    └──────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴──────┴──────┴──────┴──────┘
+//    ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬──────┬──────┬──────┬──────┐
+//    │  `  │  1  │  2  │  3  │  4  │  5  │  6  │  7  │  8   │  9   │  0   │ bspc │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼──────┼──────┼──────┤
+//    │  ~  │  (  │  )  │  #  │  =  │  %  │  ^  │  -  │  *   │  {   │  }   │  [   │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼──────┼──────┼──────┤
+//    │  |  │  !  │  @  │  +  │  $  │     │  _  │  &  │  <   │  >   │  \   │  ]   │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼──────┼──────┼──────┤
+//    │     │     │     │     │     │     │     │     │ mnxt │ vold │ volu │ mply │
+//    └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴──────┴──────┴──────┴──────┘
 [_RAISE] = LAYOUT_planck_grid(
   KC_GRV  , KC_1    , KC_2    , KC_3    , KC_4    , KC_5    , KC_6    , KC_7    , KC_8    , KC_9    , KC_0    , KC_BSPC,
-  KC_TILD , KC_EXLM , KC_AT   , KC_HASH , KC_EQL  , KC_DLR  , KC_CIRC , KC_LPRN , KC_RPRN , KC_AMPR , KC_ASTR , KC_PLUS,
-  KC_LSFT , KC_LT   , KC_GT   , KC_BSLS , KC_PERC , KC_UNDS , KC_MINS , KC_LCBR , KC_RCBR , KC_LBRC , KC_RBRC , KC_PIPE,
+  KC_TILD , KC_LPRN , KC_RPRN , KC_HASH , KC_EQL  , KC_PERC , KC_CIRC , KC_MINS , KC_ASTR , KC_LCBR , KC_RCBR , KC_LBRC,
+  KC_PIPE , KC_EXLM , KC_AT   , KC_PLUS , KC_DLR  , _______ , KC_UNDS , KC_AMPR , KC_LT   , KC_GT   , KC_BSLS , KC_RBRC,
   _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , KC_MNXT , KC_VOLD , KC_VOLU , KC_MPLY
+),
+
+//    ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
+//    │  `  │  1  │  2  │  3  │  4  │  5  │  6  │  7  │  8  │  9  │  0  │     │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+//    │  ~  │  (  │  )  │  #  │  =  │  %  │  ^  │  -  │  *  │  {  │  }  │  [  │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+//    │  |  │  !  │  @  │  +  │  $  │  :  │  _  │  &  │  <  │  >  │  \  │  ]  │
+//    ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
+//    │     │     │     │     │     │     │     │     │     │     │     │     │
+//    └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
+[_PEPPY] = LAYOUT_planck_grid(
+  KC_GRV  , KC_1    , KC_2    , KC_3    , KC_4    , KC_5    , KC_6    , KC_7    , KC_8    , KC_9    , KC_0    , _______,
+  KC_TILD , KC_LPRN , KC_RPRN , KC_HASH , KC_EQL  , KC_PERC , KC_CIRC , KC_MINS , KC_ASTR , KC_LCBR , KC_RCBR , KC_LBRC,
+  KC_PIPE , KC_EXLM , KC_AT   , KC_PLUS , KC_DLR  , KC_COLN , KC_UNDS , KC_AMPR , KC_LT   , KC_GT   , KC_BSLS , KC_RBRC,
+  _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______
 ),
 
 //    ┌─────┬─────┬─────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┬──────┐
@@ -281,24 +298,24 @@ uint32_t reset_note(uint32_t trigger_time, void *note) {
     return 0;
 }
 
-bool play_encoder_melody(uint8_t index, bool clockwise) {
-    cancel_deferred_exec(tokens[index]);
-    if (clockwise) {
-        melody[index][1][0] = melody[index][1][0] * ET12_MINOR_SECOND;
-        melody[index][0][0] = melody[index][1][0] / ET12_PERFECT_FIFTH;
-        audio_play_melody(&melody[index], 2, false);
-    } else {
-        melody[index][1][0] = melody[index][1][0] / ET12_MINOR_SECOND;
-        melody[index][0][0] = melody[index][1][0] * ET12_TRITONE;
-        audio_play_melody(&melody[index], 2, false);
-    }
-    tokens[index] = defer_exec(1000, reset_note, &melody[index][1][0]);
-    return false;
-}
+// bool play_encoder_melody(uint8_t index, bool clockwise) {
+//     cancel_deferred_exec(tokens[index]);
+//     if (clockwise) {
+//         melody[index][1][0] = melody[index][1][0] * ET12_MINOR_SECOND;
+//         melody[index][0][0] = melody[index][1][0] / ET12_PERFECT_FIFTH;
+//         audio_play_melody(&melody[index], 2, false);
+//     } else {
+//         melody[index][1][0] = melody[index][1][0] / ET12_MINOR_SECOND;
+//         melody[index][0][0] = melody[index][1][0] * ET12_TRITONE;
+//         audio_play_melody(&melody[index], 2, false);
+//     }
+//     tokens[index] = defer_exec(1000, reset_note, &melody[index][1][0]);
+//     return false;
+// }
 
-bool encoder_update_user(uint8_t index, bool clockwise) {
-    return play_encoder_melody(index, clockwise);
-}
+// bool encoder_update_user(uint8_t index, bool clockwise) {
+//     return play_encoder_melody(index, clockwise);
+// }
 
 bool dip_switch_update_user(uint8_t index, bool active) {
     switch (index) {

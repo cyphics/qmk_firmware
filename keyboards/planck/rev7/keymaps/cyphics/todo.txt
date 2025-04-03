@@ -1,2 +1,2 @@
-- Add shift to allow smoother mouse control (cursor and wheel)
-- Find solution for accents (unicode?)
+- Add shift to allow smoother mouse control (cursor and wheel) (FAIL)
+- Find solution for accents (unicode?) (FAIL)

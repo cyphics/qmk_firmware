@@ -16,23 +16,20 @@
 
 #include "keycodes.h"
 #include "keymap_us.h"
+#include "unicode.h"
 #include QMK_KEYBOARD_H
 #include "keymap_swiss_fr.h"
 
 
 
-enum planck_layers { _QWERTY, _QWERTZ, _LOWER, _RAISE, _SYMBOLS, _ADJUST, _PLOVER, _MISC };
+enum planck_layers { _QWERTY, _QWERTZ, _LOWER, _RAISE, _SYMBOLS, _UP_DOWN, _PLOVER, _MISC };
 
 enum planck_keycodes { PLOVER = SAFE_RANGE, BACKLIT, EXT_PLV };
 
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
 #define MISC  MO(_MISC)
-
 #define QWERTY PDF(_QWERTY)
-// #define QWERTZ PDF(_QWERTZ)
-// #define COLEMAK PDF(_COLEMAK)
-// #define DVORAK PDF(_DVORAK)
 
 // Tap dance declarations
 enum {
@@ -102,16 +99,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //    ┌─────────────────┬─────┬──────┬──────┬───────┬──────┬─────┬───────┬───┬───┬───┬──────┐
 //    │       tab       │  q  │  w   │  e   │   r   │  t   │  y  │   u   │ i │ o │ p │ bspc │
 //    ├─────────────────┼─────┼──────┼──────┼───────┼──────┼─────┼───────┼───┼───┼───┼──────┤
-//    │ TD(TD_CTRL_ESC) │  a  │  s   │  d   │   f   │  g   │  h  │   j   │ k │ l │ ; │  '   │
+//    │ TD(TD_CTRL_ESC) │  a  │  s   │  d   │   f   │  g   │  h  │   j   │ k │ l │ ; │ ent  │
 //    ├─────────────────┼─────┼──────┼──────┼───────┼──────┼─────┼───────┼───┼───┼───┼──────┤
-//    │      lsft       │  z  │  x   │  c   │   v   │  b   │  n  │   m   │ , │ . │ / │ ent  │
+//    │      lsft       │  z  │  x   │  c   │   v   │  b   │  n  │   m   │ , │ . │ / │  '   │
 //    ├─────────────────┼─────┼──────┼──────┼───────┼──────┼─────┼───────┼───┼───┼───┼──────┤
 //    │     BACKLIT     │     │ lgui │ lalt │ LOWER │ MISC │ spc │ RAISE │ < │ v │ ^ │  >   │
 //    └─────────────────┴─────┴──────┴──────┴───────┴──────┴─────┴───────┴───┴───┴───┴──────┘
 [_QWERTY] = LAYOUT_planck_grid(
   KC_TAB          , KC_Q    , KC_W    , KC_E    , KC_R  , KC_T , KC_Y   , KC_U  , KC_I    , KC_O    , KC_P    , KC_BSPC ,
-  TD(TD_CTRL_ESC) , KC_A    , KC_S    , KC_D    , KC_F  , KC_G , KC_H   , KC_J  , KC_K    , KC_L    , KC_SCLN , KC_QUOT ,
-  KC_LSFT         , KC_Z    , KC_X    , KC_C    , KC_V  , KC_B , KC_N   , KC_M  , KC_COMM , KC_DOT  , KC_SLSH , KC_ENT  ,
+  TD(TD_CTRL_ESC) , KC_A    , KC_S    , KC_D    , KC_F  , KC_G , KC_H   , KC_J  , KC_K    , KC_L    , KC_SCLN , KC_ENT  ,
+  KC_LSFT         , KC_Z    , KC_X    , KC_C    , KC_V  , KC_B , KC_N   , KC_M  , KC_COMM , KC_DOT  , KC_SLSH , KC_QUOT ,
   BACKLIT         , _______ , KC_LGUI , KC_LALT , LOWER , MISC , KC_SPC , RAISE , KC_LEFT , KC_DOWN , KC_UP   , KC_RIGHT
 ),
 
@@ -132,51 +129,51 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 
 //    ┌─────┬─────┬─────┬─────────┬────────┬─────────┬──────┬──────┬──────┬──────┬──────┬──────┐
-//    │  `  │     │     │         │  home  │         │      │ end  │ ms_u │      │      │ del  │
+//    │  `  │     │     │         │        │         │      │ pgdn │ ms_u │ pgup │      │ del  │
 //    ├─────┼─────┼─────┼─────────┼────────┼─────────┼──────┼──────┼──────┼──────┼──────┼──────┤
 //    │ del │     │     │ L-Click │ R-Clic │ M-Click │ wh_d │ ms_l │ ms_d │ ms_r │ wh_u │      │
 //    ├─────┼─────┼─────┼─────────┼────────┼─────────┼──────┼──────┼──────┼──────┼──────┼──────┤
-//    │     │     │     │  Prev   │  Next  │  bTN6   │      │ pgdn │ pgup │      │      │      │
+//    │     │     │     │  Prev   │  Next  │         │      │ home │      │      │ end  │      │
 //    ├─────┼─────┼─────┼─────────┼────────┼─────────┼──────┼──────┼──────┼──────┼──────┼──────┤
 //    │     │     │     │         │        │         │      │      │ mnxt │ vold │ volu │ mply │
 //    └─────┴─────┴─────┴─────────┴────────┴─────────┴──────┴──────┴──────┴──────┴──────┴──────┘
 [_LOWER] = LAYOUT_planck_grid(
-  KC_GRV  , _______ , _______ , _______ , KC_HOME , _______ , _______ , KC_END  , KC_MS_U , _______ , _______ , KC_DEL ,
+  KC_GRV  , _______ , _______ , _______ , _______ , _______ , _______ , KC_PGDN , KC_MS_U , KC_PGUP , _______ , KC_DEL ,
   KC_DEL  , _______ , _______ , KC_BTN2 , KC_BTN1 , KC_BTN3 , KC_WH_D , KC_MS_L , KC_MS_D , KC_MS_R , KC_WH_U , _______,
-  _______ , _______ , _______ , KC_BTN4 , KC_BTN5 , KC_BTN6 , _______ , KC_PGDN , KC_PGUP , _______ , _______ , _______,
+  _______ , _______ , _______ , KC_BTN4 , KC_BTN5 , _______ , _______ , KC_HOME , _______ , _______ , KC_END  , _______,
   _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , KC_MNXT , KC_VOLD , KC_VOLU , KC_MPLY
 ),
 
-//    ┌──────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐
-//    │      │ f1  │ f2  │ f3  │ f4  │     │     │     │     │     │     │     │
-//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
-//    │ lctl │ f5  │ f6  │ f7  │ f8  │     │     │     │     │     │     │     │
-//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
-//    │ lsft │ f9  │ f10 │ f11 │ f12 │     │     │     │     │     │     │     │
-//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤
-//    │      │     │     │     │     │     │     │     │     │     │     │     │
-//    └──────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘
-[_ADJUST] = LAYOUT_planck_grid(
+//    ┌──────┬─────┬─────┬─────┬─────┬─────┬─────┬──────┬─────┬─────┬─────┬─────┐
+//    │      │ f1  │ f2  │ f3  │ f4  │     │     │      │     │     │     │     │
+//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼─────┼─────┼─────┼─────┤
+//    │ lctl │ f5  │ f6  │ f7  │ f8  │     │     │      │     │     │     │     │
+//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼─────┼─────┼─────┼─────┤
+//    │ lsft │ f9  │ f10 │ f11 │ f12 │     │     │      │     │     │     │     │
+//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼─────┼─────┼─────┼─────┤
+//    │      │     │     │     │     │     │     │ mute │     │     │     │     │
+//    └──────┴─────┴─────┴─────┴─────┴─────┴─────┴──────┴─────┴─────┴─────┴─────┘
+[_UP_DOWN] = LAYOUT_planck_grid(
   _______ , KC_F1   , KC_F2   , KC_F3   , KC_F4   , _______ , _______ , _______ , _______ , _______ , _______ , _______,
   KC_LCTL , KC_F5   , KC_F6   , KC_F7   , KC_F8   , _______ , _______ , _______ , _______ , _______ , _______ , _______,
   KC_LSFT , KC_F9   , KC_F10  , KC_F11  , KC_F12  , _______ , _______ , _______ , _______ , _______ , _______ , _______,
-  _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______
+  _______ , _______ , _______ , _______ , _______ , _______ , _______ , KC_MUTE , _______ , _______ , _______ , _______
 ),
 
-//    ┌─────────┬─────────┬─────┬─────┬─────┬─────┬─────┬─────────────┬─────────────┬─────────────┬─────┬────────┐
-//    │ QK_BOOT │         │     │  é  │     │     │     │             │      ^      │   D_CIRC    │     │        │
-//    ├─────────┼─────────┼─────┼─────┼─────┼─────┼─────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
-//    │         │    à    │  è  │     │     │     │     │      <      │      v      │      >      │     │ D_TREM │
-//    ├─────────┼─────────┼─────┼─────┼─────┼─────┼─────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
-//    │         │         │     │  ç  │     │     │     │ Mouse Acc 1 │ Mouse Acc 2 │ Mouse Acc 3 │     │        │
-//    ├─────────┼─────────┼─────┼─────┼─────┼─────┼─────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
-//    │  caps   │ DB_TOGG │     │     │     │     │     │             │             │             │     │        │
-//    └─────────┴─────────┴─────┴─────┴─────┴─────┴─────┴─────────────┴─────────────┴─────────────┴─────┴────────┘
+//    ┌─────────┬────────────┬─────┬─────┬─────┬─────┬────────────────────┬─────────────┬─────────────┬─────────────┬─────┬────────┐
+//    │ QK_BOOT │ UC(0x30C4) │     │  é  │     │     │                    │             │      ^      │   D_CIRC    │     │        │
+//    ├─────────┼────────────┼─────┼─────┼─────┼─────┼────────────────────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
+//    │         │     à      │  è  │     │     │     │                    │      <      │      v      │      >      │     │ D_TREM │
+//    ├─────────┼────────────┼─────┼─────┼─────┼─────┼────────────────────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
+//    │         │            │     │  ç  │     │     │                    │ Mouse Acc 1 │ Mouse Acc 2 │ Mouse Acc 3 │     │        │
+//    ├─────────┼────────────┼─────┼─────┼─────┼─────┼────────────────────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
+//    │  caps   │  DB_TOGG   │     │     │     │     │ UNICODE_MODE_LINUX │             │             │             │     │        │
+//    └─────────┴────────────┴─────┴─────┴─────┴─────┴────────────────────┴─────────────┴─────────────┴─────────────┴─────┴────────┘
 [_MISC] = LAYOUT_planck_grid(
-  QK_BOOT , _______ , _______ , E_ACUT  , _______ , _______ , _______ , _______                 , KC_UP                   , D_CIRC                  , _______ , _______,
-  _______ , A_GRAV  , E_GRAV  , _______ , _______ , _______ , _______ , KC_LEFT                 , KC_DOWN                 , KC_RIGHT                , _______ , D_TREM ,
-  _______ , _______ , _______ , CEDILL  , _______ , _______ , _______ , QK_MOUSE_ACCELERATION_0 , QK_MOUSE_ACCELERATION_1 , QK_MOUSE_ACCELERATION_2 , _______ , _______,
-  KC_CAPS , DB_TOGG , _______ , _______ , _______ , _______ , _______ , _______                 , _______                 , _______                 , _______ , _______
+  QK_BOOT , UC(0x30C4) , _______ , E_ACUT  , _______ , _______ , _______            , _______                 , KC_UP                   , D_CIRC                  , _______ , _______,
+  _______ , A_GRAV     , E_GRAV  , _______ , _______ , _______ , _______            , KC_LEFT                 , KC_DOWN                 , KC_RIGHT                , _______ , D_TREM ,
+  _______ , _______    , _______ , CEDILL  , _______ , _______ , _______            , QK_MOUSE_ACCELERATION_0 , QK_MOUSE_ACCELERATION_1 , QK_MOUSE_ACCELERATION_2 , _______ , _______,
+  KC_CAPS , DB_TOGG    , _______ , _______ , _______ , _______ , UNICODE_MODE_LINUX , _______                 , _______                 , _______                 , _______ , _______
 )
 };
 
@@ -190,7 +187,7 @@ float plover_gb_song[][2] = SONG(PLOVER_GOODBYE_SOUND);
 bool play_encoder_melody(uint8_t index, bool clockwise);
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+    return update_tri_layer_state(state, _LOWER, _RAISE, _UP_DOWN);
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -223,7 +220,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif
                 layer_off(_RAISE);
                 layer_off(_LOWER);
-                layer_off(_ADJUST);
+                layer_off(_UP_DOWN);
                 layer_on(_PLOVER);
                 if (!eeconfig_is_enabled()) {
                     eeconfig_init();
@@ -312,14 +309,14 @@ bool dip_switch_update_user(uint8_t index, bool active) {
                     PLAY_SONG(plover_song);
                 }
 #endif
-                layer_on(_ADJUST);
+                layer_on(_UP_DOWN);
             } else {
 #ifdef AUDIO_ENABLE
                 if (play_sound) {
                     PLAY_SONG(plover_gb_song);
                 }
 #endif
-                layer_off(_ADJUST);
+                layer_off(_UP_DOWN);
             }
 #ifdef AUDIO_ENABLE
             play_sound = true;

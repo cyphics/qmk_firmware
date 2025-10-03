@@ -20,39 +20,66 @@
 #include QMK_KEYBOARD_H
 #include "keymap_swiss_fr.h"
 
-
-
 enum planck_layers { _QWERTY, _QWERTZ, _LOWER, _RAISE, _SYMBOLS, _UP_DOWN, _PLOVER, _MISC };
 
-enum planck_keycodes { PLOVER = SAFE_RANGE, BACKLIT, EXT_PLV };
+enum planck_keycodes { PLOVER = SAFE_RANGE, BACKLIT, EXT_PLV, DYN_CTRL, SWAP_CC };
 
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
-#define MISC  MO(_MISC)
+#define MISC MO(_MISC)
 #define QWERTY PDF(_QWERTY)
 
+bool swap_ctrl_caps = true;
+void SwapCtrlCapsSetting(void) {
+    swap_ctrl_caps = !swap_ctrl_caps;
+}
+
+uint16_t get_dynamic_ctrl(void) {
+    return swap_ctrl_caps ? KC_LCTL : KC_CAPS;
+}
+
+uint16_t get_dynamic_caps(void) {
+    return swap_ctrl_caps ? KC_CAPS : KC_LCTL;
+}
+
 // Tap dance declarations
-enum {
-    CT_CLN, TD_CTRL_ESC, TD_TAB_CAPS,
-};
+enum { CT_CLN, TD_CTRL_ESC, TD_TAB_CAPS };
 
 typedef struct {
     uint16_t tap;
     uint16_t hold;
     uint16_t held;
 } tap_dance_tap_hold_t;
+
+typedef struct {
+    bool is_ctrl; // true for ctrl, false for caps
+} tap_dance_dynamic_t;
+
 void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data);
 void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data);
+void tap_dance_dynamic_finished(tap_dance_state_t *state, void *user_data);
+void tap_dance_dynamic_reset(tap_dance_state_t *state, void *user_data);
 
-#define ACTION_TAP_DANCE_TAP_HOLD(tap, hold) { .fn = {NULL, tap_dance_tap_hold_finished, tap_dance_tap_hold_reset}, .user_data = (void *)&((tap_dance_tap_hold_t){tap, hold, 0}), }
+#define ACTION_TAP_DANCE_TAP_HOLD(tap, hold)                                        \
+    {                                                                               \
+        .fn        = {NULL, tap_dance_tap_hold_finished, tap_dance_tap_hold_reset}, \
+        .user_data = (void *)&((tap_dance_tap_hold_t){tap, hold, 0}),               \
+    }
+
+#define ACTION_TAP_DANCE_DYNAMIC_CTRL()                                           \
+    {                                                                             \
+        .fn        = {NULL, tap_dance_dynamic_finished, tap_dance_dynamic_reset}, \
+        .user_data = (void *)&((tap_dance_dynamic_t){true}),                      \
+    }
 
 tap_dance_action_t tap_dance_actions[] = {
-    [CT_CLN] =      ACTION_TAP_DANCE_TAP_HOLD(KC_COLN, KC_SCLN),
+    [CT_CLN] = ACTION_TAP_DANCE_TAP_HOLD(KC_COLN, KC_SCLN),
     //[CT_CLN] =      ACTION_TAP_DANCE_DOUBLE(KC_COLN, KC_SCLN),
-    [TD_CTRL_ESC] = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_ESC),
+    // [TD_CTRL_ESC] = ACTION_TAP_DANCE_DOUBLE(KC_LCTL, KC_ESC),
+    [TD_CTRL_ESC] = ACTION_TAP_DANCE_DYNAMIC_CTRL(),
+    // [TD_CAPS_ESC] = ACTION_TAP_DANCE_DOUBLE(KC_CAPS, KC_ESC),
     [TD_TAB_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_TAB, KC_CAPS),
 };
-
 
 void tap_dance_tap_hold_finished(tap_dance_state_t *state, void *user_data) {
     tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)user_data;
@@ -81,6 +108,31 @@ void tap_dance_tap_hold_reset(tap_dance_state_t *state, void *user_data) {
     }
 }
 
+void tap_dance_dynamic_finished(tap_dance_state_t *state, void *user_data) {
+    tap_dance_dynamic_t *dynamic = (tap_dance_dynamic_t *)user_data;
+
+    uint16_t keycode;
+    if (state->count == 1) {
+        keycode = dynamic->is_ctrl ? get_dynamic_ctrl() : get_dynamic_caps();
+    } else {
+        keycode = KC_ESC;
+    }
+
+    register_code16(keycode);
+}
+
+void tap_dance_dynamic_reset(tap_dance_state_t *state, void *user_data) {
+    tap_dance_dynamic_t *dynamic = (tap_dance_dynamic_t *)user_data;
+
+    uint16_t keycode;
+    if (state->count == 1) {
+        keycode = dynamic->is_ctrl ? get_dynamic_ctrl() : get_dynamic_caps();
+    } else {
+        keycode = KC_ESC;
+    }
+
+    unregister_code16(keycode);
+}
 
 #define A_GRAV ALGR(KC_A)
 #define E_GRAV ALGR(KC_S)
@@ -144,36 +196,36 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______ , _______ , _______ , _______ , _______ , _______ , _______ , _______ , KC_MNXT , KC_VOLD , KC_VOLU , KC_MPLY
 ),
 
-//    ┌──────┬─────┬─────┬─────┬─────┬─────┬─────┬──────┬─────┬─────┬─────┬─────┐
-//    │      │ f1  │ f2  │ f3  │ f4  │     │     │      │     │     │     │     │
-//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼─────┼─────┼─────┼─────┤
-//    │ lctl │ f5  │ f6  │ f7  │ f8  │     │     │      │     │     │     │     │
-//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼─────┼─────┼─────┼─────┤
-//    │ lsft │ f9  │ f10 │ f11 │ f12 │     │     │      │     │     │     │     │
-//    ├──────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼─────┼─────┼─────┼─────┤
-//    │      │     │     │     │     │     │     │ mute │     │     │     │     │
-//    └──────┴─────┴─────┴─────┴─────┴─────┴─────┴──────┴─────┴─────┴─────┴─────┘
+//    ┌──────────┬─────┬─────┬─────┬─────┬─────┬─────┬──────┬─────┬─────┬─────┬─────┐
+//    │          │ f1  │ f2  │ f3  │ f4  │     │     │      │     │     │     │     │
+//    ├──────────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼─────┼─────┼─────┼─────┤
+//    │ DYN_CTRL │ f5  │ f6  │ f7  │ f8  │     │     │      │     │     │     │     │
+//    ├──────────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼─────┼─────┼─────┼─────┤
+//    │   lsft   │ f9  │ f10 │ f11 │ f12 │     │     │      │     │     │     │     │
+//    ├──────────┼─────┼─────┼─────┼─────┼─────┼─────┼──────┼─────┼─────┼─────┼─────┤
+//    │          │     │     │     │     │     │     │ mute │     │     │     │     │
+//    └──────────┴─────┴─────┴─────┴─────┴─────┴─────┴──────┴─────┴─────┴─────┴─────┘
 [_UP_DOWN] = LAYOUT_planck_grid(
-  _______ , KC_F1   , KC_F2   , KC_F3   , KC_F4   , _______ , _______ , _______ , _______ , _______ , _______ , _______,
-  KC_LCTL , KC_F5   , KC_F6   , KC_F7   , KC_F8   , _______ , _______ , _______ , _______ , _______ , _______ , _______,
-  KC_LSFT , KC_F9   , KC_F10  , KC_F11  , KC_F12  , _______ , _______ , _______ , _______ , _______ , _______ , _______,
-  _______ , _______ , _______ , _______ , _______ , _______ , _______ , KC_MUTE , _______ , _______ , _______ , _______
+  _______  , KC_F1   , KC_F2   , KC_F3   , KC_F4   , _______ , _______ , _______ , _______ , _______ , _______ , _______,
+  DYN_CTRL , KC_F5   , KC_F6   , KC_F7   , KC_F8   , _______ , _______ , _______ , _______ , _______ , _______ , _______,
+  KC_LSFT  , KC_F9   , KC_F10  , KC_F11  , KC_F12  , _______ , _______ , _______ , _______ , _______ , _______ , _______,
+  _______  , _______ , _______ , _______ , _______ , _______ , _______ , KC_MUTE , _______ , _______ , _______ , _______
 ),
 
-//    ┌─────────┬────────────┬─────┬─────┬─────┬─────┬────────────────────┬─────────────┬─────────────┬─────────────┬─────┬────────┐
-//    │ QK_BOOT │ UC(0x30C4) │     │  é  │     │     │                    │             │      ^      │   D_CIRC    │     │        │
-//    ├─────────┼────────────┼─────┼─────┼─────┼─────┼────────────────────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
-//    │         │     à      │  è  │     │     │     │                    │      <      │      v      │      >      │     │ D_TREM │
-//    ├─────────┼────────────┼─────┼─────┼─────┼─────┼────────────────────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
-//    │         │            │     │  ç  │     │     │                    │ Mouse Acc 1 │ Mouse Acc 2 │ Mouse Acc 3 │     │        │
-//    ├─────────┼────────────┼─────┼─────┼─────┼─────┼────────────────────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
-//    │  caps   │  DB_TOGG   │     │     │     │     │ UNICODE_MODE_LINUX │             │             │             │     │        │
-//    └─────────┴────────────┴─────┴─────┴─────┴─────┴────────────────────┴─────────────┴─────────────┴─────────────┴─────┴────────┘
+//    ┌─────────┬────────────┬─────────┬─────┬─────┬─────┬────────────────────┬─────────────┬─────────────┬─────────────┬─────┬────────┐
+//    │ QK_BOOT │ UC(0x30C4) │         │  é  │     │     │                    │             │      ^      │   D_CIRC    │     │        │
+//    ├─────────┼────────────┼─────────┼─────┼─────┼─────┼────────────────────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
+//    │         │     à      │    è    │     │     │     │                    │      <      │      v      │      >      │     │ D_TREM │
+//    ├─────────┼────────────┼─────────┼─────┼─────┼─────┼────────────────────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
+//    │         │            │         │  ç  │     │     │                    │ Mouse Acc 1 │ Mouse Acc 2 │ Mouse Acc 3 │     │        │
+//    ├─────────┼────────────┼─────────┼─────┼─────┼─────┼────────────────────┼─────────────┼─────────────┼─────────────┼─────┼────────┤
+//    │  caps   │  DB_TOGG   │ SWAP_CC │     │     │     │ UNICODE_MODE_LINUX │             │             │             │     │        │
+//    └─────────┴────────────┴─────────┴─────┴─────┴─────┴────────────────────┴─────────────┴─────────────┴─────────────┴─────┴────────┘
 [_MISC] = LAYOUT_planck_grid(
   QK_BOOT , UC(0x30C4) , _______ , E_ACUT  , _______ , _______ , _______            , _______                 , KC_UP                   , D_CIRC                  , _______ , _______,
   _______ , A_GRAV     , E_GRAV  , _______ , _______ , _______ , _______            , KC_LEFT                 , KC_DOWN                 , KC_RIGHT                , _______ , D_TREM ,
   _______ , _______    , _______ , CEDILL  , _______ , _______ , _______            , QK_MOUSE_ACCELERATION_0 , QK_MOUSE_ACCELERATION_1 , QK_MOUSE_ACCELERATION_2 , _______ , _______,
-  KC_CAPS , DB_TOGG    , _______ , _______ , _______ , _______ , UNICODE_MODE_LINUX , _______                 , _______                 , _______                 , _______ , _______
+  KC_CAPS , DB_TOGG    , SWAP_CC , _______ , _______ , _______ , UNICODE_MODE_LINUX , _______                 , _______                 , _______                 , _______ , _______
 )
 };
 
@@ -198,7 +250,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #endif
     tap_dance_action_t *action;
     switch (keycode) {
-        case TD(CT_CLN):  // list all tap dance keycodes with tap-hold configurations
+        case SWAP_CC:
+            if (record->event.pressed) {
+                SwapCtrlCapsSetting();
+            }
+            return false;
+        case DYN_CTRL:
+            if (record->event.pressed) {
+                register_code16(get_dynamic_ctrl());
+            } else {
+                unregister_code16(get_dynamic_ctrl());
+            }
+            return false;
+        case TD(CT_CLN): // list all tap dance keycodes with tap-hold configurations
             action = &tap_dance_actions[QK_TAP_DANCE_GET_INDEX(keycode)];
             if (!record->event.pressed && action->state.count && !action->state.finished) {
                 tap_dance_tap_hold_t *tap_hold = (tap_dance_tap_hold_t *)action->user_data;
@@ -274,7 +338,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 deferred_token tokens[8];
 
 uint32_t reset_note(uint32_t trigger_time, void *note) {
-    *(float*)note = 440.0f;
+    *(float *)note = 440.0f;
     return 0;
 }
 

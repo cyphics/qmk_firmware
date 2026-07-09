@@ -35,11 +35,11 @@ void SwapCtrlCapsSetting(void) {
 }
 
 uint16_t get_dynamic_ctrl(void) {
-    return swap_ctrl_caps ? KC_LCTL : KC_CAPS;
+    return swap_ctrl_caps ? KC_CAPS : KC_LCTL;
 }
 
 uint16_t get_dynamic_caps(void) {
-    return swap_ctrl_caps ? KC_CAPS : KC_LCTL;
+    return swap_ctrl_caps ? KC_LCTL : KC_CAPS;
 }
 
 // Tap dance declarations
@@ -247,7 +247,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (IS_ENCODEREVENT(record->event) && record->event.pressed) {
         play_encoder_melody(record->event.key.col, record->event.type == ENCODER_CCW_EVENT);
     }
-#endif
+#    endidf
     tap_dance_action_t *action;
     switch (keycode) {
         case SWAP_CC:
@@ -278,10 +278,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case PLOVER:
             if (record->event.pressed) {
-#ifdef AUDIO_ENABLE
+#    ifdef AUDIO_ENABLE
                 stop_all_notes();
                 PLAY_SONG(plover_song);
-#endif
+#    endif
                 layer_off(_RAISE);
                 layer_off(_LOWER);
                 layer_off(_UP_DOWN);
@@ -297,9 +297,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case EXT_PLV:
             if (record->event.pressed) {
-#ifdef AUDIO_ENABLE
+#    ifdef AUDIO_ENABLE
                 PLAY_SONG(plover_gb_song);
-#endif
+#    endif
                 layer_off(_PLOVER);
             }
             return false;
@@ -321,19 +321,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // };
 /* clang-format on */
 
-#define JUST_MINOR_THIRD 1.2
-#define JUST_MAJOR_THIRD 1.25
-#define JUST_PERFECT_FOURTH 1.33333333
-#define JUST_TRITONE 1.42222222
-#define JUST_PERFECT_FIFTH 1.33333333
+#    define JUST_MINOR_THIRD 1.2
+#    define JUST_MAJOR_THIRD 1.25
+#    define JUST_PERFECT_FOURTH 1.33333333
+#    define JUST_TRITONE 1.42222222
+#    define JUST_PERFECT_FIFTH 1.33333333
 
-#define ET12_MINOR_SECOND 1.059463
-#define ET12_MAJOR_SECOND 1.122462
-#define ET12_MINOR_THIRD 1.189207
-#define ET12_MAJOR_THIRD 1.259921
-#define ET12_PERFECT_FOURTH 1.33484
-#define ET12_TRITONE 1.414214
-#define ET12_PERFECT_FIFTH 1.498307
+#    define ET12_MINOR_SECOND 1.059463
+#    define ET12_MAJOR_SECOND 1.122462
+#    define ET12_MINOR_THIRD 1.189207
+#    define ET12_MAJOR_THIRD 1.259921
+#    define ET12_PERFECT_FOURTH 1.33484
+#    define ET12_TRITONE 1.414214
+#    define ET12_PERFECT_FIFTH 1.498307
 
 deferred_token tokens[8];
 
@@ -364,27 +364,27 @@ uint32_t reset_note(uint32_t trigger_time, void *note) {
 bool dip_switch_update_user(uint8_t index, bool active) {
     switch (index) {
         case 0: {
-#ifdef AUDIO_ENABLE
+#    ifdef AUDIO_ENABLE
             static bool play_sound = false;
-#endif
+#    endif
             if (active) {
-#ifdef AUDIO_ENABLE
+#    ifdef AUDIO_ENABLE
                 if (play_sound) {
                     PLAY_SONG(plover_song);
                 }
-#endif
+#    endif
                 layer_on(_UP_DOWN);
             } else {
-#ifdef AUDIO_ENABLE
+#    ifdef AUDIO_ENABLE
                 if (play_sound) {
                     PLAY_SONG(plover_gb_song);
                 }
-#endif
+#    endif
                 layer_off(_UP_DOWN);
             }
-#ifdef AUDIO_ENABLE
+#    ifdef AUDIO_ENABLE
             play_sound = true;
-#endif
+#    endif
             break;
         }
     }

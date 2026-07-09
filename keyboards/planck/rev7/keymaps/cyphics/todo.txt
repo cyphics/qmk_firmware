@@ -1,3 +1,4 @@
 - Add shift to allow smoother mouse control (cursor and wheel) (FAIL)
 - Find solution for accents (unicode?) (FAIL)
-- Enable toggle caps-ctrl switch
+- define xx key as setup layer
+- add media keys
